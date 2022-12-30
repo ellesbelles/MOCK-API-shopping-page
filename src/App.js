@@ -1,24 +1,31 @@
-import logo from './logo.svg';
+import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
+import { createContext, useState, useEffect } from "react";
 import './App.css';
+import Home from "./Home";
+import CreateProduct from "./CreateProduct";
+import UpdateProduct from "./UpdateProduct";
 
+export const ProductContext = createContext();
 function App() {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    fetch("http://localhost:3001/products")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data)
+      setProducts(data);
+    })
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ProductContext.Provider value={{products, setProducts}}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/create" element={<CreateProduct />} />
+          <Route path="/update" element={<UpdateProduct />} />
+        </Routes>
+      </BrowserRouter>
+    </ProductContext.Provider>
   );
 }
 
